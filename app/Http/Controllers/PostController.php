@@ -28,30 +28,29 @@ class PostController extends Controller {
 
        
         $this->validate($request, [
-            'image' => 'required | mimes: jpg,png,jpeg | max:5048',
+            'image_path' => 'required | mimes: jpg,png,jpeg | max:5048',
             'description' => 'required | max:1000'
         ]);
 
         
-        $image = $request->file('image');
-        $newImageName = time() . '-' . $image->name . '.' . $image->extension();
+        $image_path = $request->file('image_path');
+        $newImageName = time() . '-'  . '.' . $image->extension();
 
-        $image->move(public_path(images), $newImageName);
+        $image_path->move(public_path('images'), $newImageName);
 
-        $description = $request['description'];
-       
 
         $post = new $Post();
-        $post->image = $newImageName;
-        $post->description = $description;
+        $post->image_path = $newImageName;
+        $post->description = $request['description'];
+        $post->user_id = $request['user_id'];
+        
+        
+        $message = 'There was an error';
+        if($request->user()->posts()->save($post)){
+            $message = 'Your post has succsessfuly created!';
+        }
 
-        dd($post);
-        $post->save();
-        // $message = 'There was an error';
-        // if($request->user()->posts()->save($post)){
-        //     $message = 'Your post has succsessfuly created!';
-        // }
-
+        
         return redirect()->route('timeline');
     }
 
@@ -71,27 +70,28 @@ class PostController extends Controller {
 
 
         $this->validate($request, [
-            'body' => 'required'
+            'description' => 'required'
         ]);
 
         if(Auth::User() != $post->user){
             return redirect()->back();
         }
 
-        $post = Post::find($request['postId']);
-        $post->body = $request['body'];
+        $post = Post::find($request['id']);
+        $post->description = $request['description'];
         $post->update();
         
-        return response()->json(['new_body' => $post -> body], 200);
+        return response()->json(['new_description' => $post -> description], 200);
     }
 
+    // This method is not completed, unfortunately...
     public function addComment (Request $request, $post_id){
 
         $this->validate($request, [
-            'image' => 'required | mimes: jpg,png,jpeg | max:5048',
+            'image_path' => 'required | mimes: jpg,png,jpeg | max:5048',
             'description' => 'required | max:1000'
         ]);
-        return $post_id;
+        return redirect()->back();;
     }
 
 }

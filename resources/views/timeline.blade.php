@@ -66,7 +66,7 @@
         <form>
             <div class="form-group">
                 <label for="post-body">Edit your post...</label>
-                <textarea class="form-control" name="post-body" id="post-body"  rows="5"></textarea>
+                <textarea class="form-control" name="post-description" id="post-description"  rows="5"></textarea>
             </div>
         </form>
       </div>
